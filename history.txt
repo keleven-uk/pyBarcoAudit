@@ -1,0 +1,4 @@
+V2020.1.
+
+    The program will scan a Excel spreadsheet of calibration dates and produce a usage report.
+    Mainly an ecersie in using openpyxl.

@@ -1,0 +1,14 @@
+#   Config files for pyBarcoAudit.py
+#
+#   true and false are lowe case
+#   Config files for pyBarcoAudit
+#
+#   July 2020    (c) Kevin Scott
+
+[INFO]
+myVERSION = "2020.1"
+myNAME = "pyBarcoAudit"
+
+[TQDM]
+ncols = 160
+

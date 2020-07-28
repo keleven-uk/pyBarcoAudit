@@ -1,0 +1,7 @@
+###### Requirements without Version Specifiers ######
+openpyxl
+colorama
+tqdm
+
+###### Requirements with Version Specifiers ######
+libindic-utils>=1.0.3
