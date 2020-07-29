@@ -67,6 +67,13 @@ class Config():
         """
         return self.config['INFO']['myVERSION']
 
+    @property
+    def NCOLS(self):
+        """  Returns Max number of columns for tqdm [width of progress bar].
+        """
+        return self.config['TQDM']['ncols']
+
+
     def _writeDefaultConfig(self):
         """ Write a default configure file.
             This is hard coded  ** TO KEEP UPDATED **

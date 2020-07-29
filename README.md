@@ -2,10 +2,11 @@ pyBarcoAudit.
 
 The program will scan a Excel spreadsheet of calibration dates and produce a usage report.
 
-Mainly an ecersie in using openpyxl.
+Mainly an exercise in using openpyxl.
 
 
 To install dependences pip -r requirments.txt
+
 
 usage: pyBarcoAudit.py [-h] [-s SOURCE]
 

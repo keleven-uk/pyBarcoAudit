@@ -1,4 +1,16 @@
 V2020.1.
 
     The program will scan a Excel spreadsheet of calibration dates and produce a usage report.
-    Mainly an ecersie in using openpyxl.
+    Mainly an exercise in using openpyxl.
+    Main outline of program completes [mainly copies form another :-)]
+    Will parse and validate initial arguments.
+    Will loop through spreadsheet and print rows
+
+V2020.2.
+
+    Added dataClasses.py which hold two dataclasses, one to hold monitor info and one to hold results.
+    Added dataMapping.py which hold constants.  These are edges of the data table and column headers.
+    pyBarcoAudit.py
+        Added the logic for scanWorkBook, parseMonitors & print Results.
+        Will now scan the spreadsheet and report on number live, scrapped & failed monitors.
+        Will also report on number on monitors in and out of date.

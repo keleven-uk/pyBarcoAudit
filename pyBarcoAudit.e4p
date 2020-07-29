@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-5.1.dtd">
 <!-- eric project file for project pyBarcoAudit -->
-<!-- Saved: 2020-07-28, 20:32:33 -->
+<!-- Saved: 2020-07-28, 22:44:13 -->
 <!-- Copyright (C) 2020 Kevin Scott, pyBarcoAudit@keleven.co.uk -->
 <Project version="5.1">
   <Language>en_GB</Language>
@@ -14,6 +14,8 @@
   <Eol index="0"/>
   <Sources>
     <Source>__init__.py</Source>
+    <Source>dataClasses.py</Source>
+    <Source>dataMapping.py</Source>
     <Source>myConfig.py</Source>
     <Source>myLicense.py</Source>
     <Source>myLogger.py</Source>

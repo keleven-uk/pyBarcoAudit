@@ -22,30 +22,111 @@
 #                                                                                                             #
 ###############################################################################################################
 
-
 import textwrap
 import argparse
+import datetime
+from pathlib import Path
 import colorama
 import myTimer
 import myConfig
 import myLogger
 from openpyxl import load_workbook
 from tqdm import tqdm
-from pathlib import Path
+from dataClasses import Monitor, Results
 from myLicense import printLongLicense, printShortLicense
+from dataMapping import *
+
+############################################################################################ printResults ######
+def printResults(results):
+    """  Prints the results
+    """
+    inDate  = results.inDateMonitors  / results.totalMonitors * 100
+    outDate = results.outDateMonitors / results.totalMonitors * 100
+
+    print("-"*85)
+    print(f" Total Monitors    : {results.totalMonitors:4}             Monitors in date          : {results.inDateMonitors}  {inDate:.2f}%")
+    print(f" Scrapped Monitors : {results.ScrappedMonitors:4}             Monitors out of date      : {results.outDateMonitors}  {outDate:.2f}%")
+    print(f" Failed Monitors   : {results.FailedMonitors:4}             Monitors with no due date : {results.errDateMonitors}")
+    print("="*75)
+    print(f" Live Monitors     : {results.totalMonitors-results.ScrappedMonitors-results.FailedMonitors:4} \
+                                        {results.inDateMonitors+results.outDateMonitors-results.errDateMonitors}")
+
+
+############################################################################################ parseMonitors ######
+def parseMonitors(monitors, results):
+    """  Loops through the directory monitors collating the results.
+    """
+    results.totalMonitors = len(monitors)
+
+    for monitor in monitors:
+        if monitor.Status == "Scrapped":
+            results.ScrappedMonitors = results.ScrappedMonitors + 1
+        elif monitor.Status == "Faulty":
+            results.FailedMonitors = results.FailedMonitors + 1
+        else:
+            #  Only process live monitors.
+            if monitor.PPMDueDate == None:                                      #  In case of error.
+                logger.error(f"{monitor.serialNumber} has no PPM date set.")
+                results.errDateMonitors = results.errDateMonitors + 1
+
+            if monitor.PPMDueDate > datetime.datetime.now():
+                results.inDateMonitors = results.inDateMonitors + 1
+            else:
+                results.outDateMonitors = results.outDateMonitors + 1
 
 ############################################################################################ scanWorkBook ######
-def scanWorkBook(source):
-
-    wb = load_workbook(filename=source)
+def scanWorkBook(source, monitors):
+    """  Loads the spreadsheet, already been validated.
+         Populates the directory monitors with the contents of the spreadsheet.
+    """
+    #  Load the spreadsheet in read only [don't want to accidentally amend]
+    #  and only load data and not formulas.
+    workBook = load_workbook(filename=source, read_only=True, data_only=True)
 
     #  Grab the active worksheet
-    ws = wb.active
-    logger.info(f"Scanning {ws} in {source}")
+    workSheet = workBook.active
+    logger.info(f"Scanning {workSheet.title} in {source}")
 
-    for row in tqdm(ws.rows, unit="rows", ncols=160, position=0):
-        pass
-        #print(row)
+    for row in tqdm(workSheet.iter_rows(min_row = MIN_ROW,
+                                        max_row = MAX_ROW,
+                                        min_col = MIN_COL,
+                                        max_col = MAX_COL,
+                                        values_only=True), unit=" rows", ncols=myConfig.NCOLS):
+
+        monitor = Monitor(monitorType    = row[MONITOR_TYPE],
+                          serialNumber   = row[SERIAL_NUMBER],
+                          CliEng_ID      = row[CE_ID],
+                          PCAssetNumber  = row[PC_ASSET_NO],
+                          Site           = row[SITE],
+                          Location       = row[LOCATION],
+                          DisplayTime    = row[DISPLAY_TIME],
+                          BacklightTime  = row[BACKLIGHT_TIME],
+                          InstalledDate  = row[INSTALLED_DATE],
+                          AcceptanceDate = row[ACCEPTANCE_DATE],
+                          FirstPPMDate   = row[FIRST_PPM_DATE],
+                          SecondPPMDate  = row[SECOND_PPM_DATE],
+                          ThirdPPMDate   = row[THIRD_PPM_DATE],
+                          FourthPPMDate  = row[FOURTH_PPM_DATE],
+                          PPMDueDate     = row[PPM_DUE_DATE],
+                          Status         = row[STATUS],
+                          CommentOne     = row[COMMENT_ONE],
+                          CommentTwo     = row[COMMENT_TWO])
+
+        monitors.append(monitor)
+
+############################################################################################## parseArgs ######
+def main(source):
+    """  Main function, calls each separate stage.
+            scanWorkBook(source)                -   scans the spreadsheet and populates the directory monitors.
+            parseMonitors(monitors, results)    -   collates the results.
+            printResults(results)               -   prints the results.
+    """
+    results = Results()     #  Used to hold the results.
+    monitors = []           #  Used to hold the monitor data.
+
+    scanWorkBook(source, monitors)
+    parseMonitors(monitors, results)
+    printResults(results)
 
 ############################################################################################## parseArgs ######
 def parseArgs():
@@ -116,10 +197,12 @@ if __name__ == "__main__":
 
     source = parseArgs()
 
-    scanWorkBook(source)
+    main(source)
 
     timeStop = timer.Stop
 
+    print()
+    print(f"{colorama.Fore.CYAN}Completed :: {timeStop} {colorama.Fore.RESET}")
     logger.info(f"Completed :: {timeStop}")
     logger.info(f"End of {myConfig.NAME} {myConfig.VERSION}")
 
