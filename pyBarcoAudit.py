@@ -32,47 +32,89 @@ import myConfig
 import myLogger
 from openpyxl import load_workbook
 from tqdm import tqdm
-from dataClasses import Monitor, Results
+from dataClasses import Monitor, MonitorResults, ModelResults, SiteResults
 from myLicense import printLongLicense, printShortLicense
 from dataMapping import *
 
-############################################################################################ printResults ######
-def printResults(results):
-    """  Prints the results
+############################################################################################ printModelResults ########
+def printModelResults(modelResults):
+    """  Prints the Model results
     """
-    inDate  = results.inDateMonitors  / results.totalMonitors * 100
-    outDate = results.outDateMonitors / results.totalMonitors * 100
+    total = 0
+    print("-" + " Model Information " + "-"*61)
+    print()
+    for model in modelResults.models:
+        print(f"{model:15} {modelResults.models[model][0]}")
+        total += modelResults.models[model][0]
 
-    print("-"*85)
-    print(f" Total Monitors    : {results.totalMonitors:4}             Monitors in date          : {results.inDateMonitors}  {inDate:.2f}%")
-    print(f" Scrapped Monitors : {results.ScrappedMonitors:4}             Monitors out of date      : {results.outDateMonitors}  {outDate:.2f}%")
-    print(f" Failed Monitors   : {results.FailedMonitors:4}             Monitors with no due date : {results.errDateMonitors}")
-    print("="*75)
-    print(f" Live Monitors     : {results.totalMonitors-results.ScrappedMonitors-results.FailedMonitors:4} \
-                                        {results.inDateMonitors+results.outDateMonitors-results.errDateMonitors}")
-
-
-############################################################################################ parseMonitors ######
-def parseMonitors(monitors, results):
-    """  Loops through the directory monitors collating the results.
+    print("="*80)
+    print(f" Total Models  : {total}")
+    print()
+############################################################################################ parseModel ###############
+def parseModel(monitors, modelResults):
+    """  Loops through the directory monitors collating the Model results.
     """
-    results.totalMonitors = len(monitors)
+    for monitor in monitors:
+        modelResults.addModel(monitor.monitorType)
+############################################################################################ printSiteResults #########
+def printSiteResults(siteResults):
+    """  Prints the Site results
+    """
+    total = 0
+    print("-" + " Site Information " + "-"*61)
+    print()
+    for site in siteResults.sites:
+        print(f"{site:15} {siteResults.sites[site][0]}")
+        total += siteResults.sites[site][0]
+
+    print("="*80)
+    print(f" Total Monitors  : {total}")
+    print()
+############################################################################################ parseSite ################
+def parseSite(monitors, siteResults):
+    """  Loops through the directory monitors collating the Site results.
+    """
+    for monitor in monitors:
+        siteResults.addSite(monitor.Site)
+############################################################################################ printMonitorResults ######
+def printMonitorResults(monitorResults):
+    """  Prints the Monitor results
+    """
+    inDate  = monitorResults.inDateMonitors  / monitorResults.totalMonitors * 100
+    outDate = monitorResults.outDateMonitors / monitorResults.totalMonitors * 100
+
+    print("-" + " Monitor Information " + "-"*58)
+    print()
+    print(f" Total Monitors    : {monitorResults.totalMonitors:4}             Monitors in date          : {monitorResults.inDateMonitors}  {inDate:.2f}%")
+    print(f" Scrapped Monitors : {monitorResults.ScrappedMonitors:4}             Monitors out of date      : {monitorResults.outDateMonitors}  {outDate:.2f}%")
+    print(f" Failed Monitors   : {monitorResults.FailedMonitors:4}             Monitors with no due date : {monitorResults.errDateMonitors}")
+    print("="*80)
+    print(f" Live Monitors     : {monitorResults.totalMonitors-monitorResults.ScrappedMonitors-monitorResults.FailedMonitors:4} \
+                                        {monitorResults.inDateMonitors+monitorResults.outDateMonitors-monitorResults.errDateMonitors}")
+    print()
+
+############################################################################################ parseMonitors ############
+def parseMonitors(monitors, monitorResults):
+    """  Loops through the directory monitors collating the Monitor results.
+    """
+    monitorResults.totalMonitors = len(monitors)
 
     for monitor in monitors:
         if monitor.Status == "Scrapped":
-            results.ScrappedMonitors = results.ScrappedMonitors + 1
+            monitorResults.ScrappedMonitors = monitorResults.ScrappedMonitors + 1
         elif monitor.Status == "Faulty":
-            results.FailedMonitors = results.FailedMonitors + 1
+            monitorResults.FailedMonitors = monitorResults.FailedMonitors + 1
         else:
             #  Only process live monitors.
             if monitor.PPMDueDate == None:                                      #  In case of error.
                 logger.error(f"{monitor.serialNumber} has no PPM date set.")
-                results.errDateMonitors = results.errDateMonitors + 1
+                monitorResults.errDateMonitors = monitorResults.errDateMonitors + 1
+                continue
 
             if monitor.PPMDueDate > datetime.datetime.now():
-                results.inDateMonitors = results.inDateMonitors + 1
+                monitorResults.inDateMonitors = monitorResults.inDateMonitors + 1
             else:
-                results.outDateMonitors = results.outDateMonitors + 1
+                monitorResults.outDateMonitors = monitorResults.outDateMonitors + 1
 
 ############################################################################################ scanWorkBook ######
 def scanWorkBook(source, monitors):
@@ -114,19 +156,39 @@ def scanWorkBook(source, monitors):
 
         monitors.append(monitor)
 
+        checkForErrors(monitor)
+######################################################################################### checkForErrors ######
+def checkForErrors(monitor):
+    """  Check for some common errors with the data.
+    """
+    if monitor.monitorType == "":
+        logger.error(f"Monitor has no monitor type {monitor.serialNumber}.")
+    if monitor.Site == "":
+        logger.error(f"Monitor has no Site {monitor.serialNumber}.")
 ############################################################################################## parseArgs ######
 def main(source):
     """  Main function, calls each separate stage.
-            scanWorkBook(source)                -   scans the spreadsheet and populates the directory monitors.
-            parseMonitors(monitors, results)    -   collates the results.
-            printResults(results)               -   prints the results.
+            scanWorkBook(source)                        -   scans the spreadsheet and populates the directory monitors.
+            parseMonitors(monitors, monitorResults)     -   collates the results.
+            printResults(monitorResults)                -   prints the results.
     """
-    results = Results()     #  Used to hold the results.
-    monitors = []           #  Used to hold the monitor data.
+    monitorResults = MonitorResults()     #  Used to hold the results.
+    modelResults   = ModelResults()       #  Used to hold the breakdown by model
+    siteResults    = SiteResults()        #  Used to hold the breakdown by site
+    monitors       = []                   #  Used to hold the monitor data.
 
     scanWorkBook(source, monitors)
-    parseMonitors(monitors, results)
-    printResults(results)
+
+    print()
+
+    parseMonitors(monitors, monitorResults)
+    printMonitorResults(monitorResults)
+
+    parseModel(monitors, modelResults)
+    printModelResults(modelResults)
+
+    parseSite(monitors, siteResults)
+    printSiteResults(siteResults)
 
 ############################################################################################## parseArgs ######
 def parseArgs():

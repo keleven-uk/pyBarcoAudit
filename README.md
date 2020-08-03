@@ -5,7 +5,7 @@ The program will scan a Excel spreadsheet of calibration dates and produce a usa
 Mainly an exercise in using openpyxl.
 
 
-To install dependences pip -r requirments.txt
+To install dependencies pip -r requirements.txt
 
 
 usage: pyBarcoAudit.py [-h] [-s SOURCE]

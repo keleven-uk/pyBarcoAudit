@@ -6,7 +6,7 @@
 #   July 2020    (c) Kevin Scott
 
 [INFO]
-myVERSION = "2020.2"
+myVERSION = "2020.3"
 myNAME = "pyBarcoAudit"
 
 [TQDM]
