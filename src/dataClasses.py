@@ -42,6 +42,8 @@ class Monitor:
     SecondPPMDate : datetime.datetime
     ThirdPPMDate  : datetime.datetime
     FourthPPMDate : datetime.datetime
+    FifthPPMDate  : datetime.datetime
+    SixthPPMDate  : datetime.datetime
     PPMDueDate    : datetime.datetime
     Status        : str
     CommentOne    : str
@@ -68,16 +70,27 @@ class ModelResults():
 
     def models(self):
         """  Returns the model dictionary.
+
+             The key is the model.
+             The data is list of (site model, model scrapped, model faulty, model in date).
         """
         return self.models
 
-    def addModel(self, model):
+    def addModel(self, model, status, PPMDueDate):
         """  If the model already exists in the dictionary add to the count else add the model.
         """
         if model in self.models:
             self.models[model][0] = self.models[model][0] + 1
         else:
-            self.models[model] = [0]
+            self.models[model] = list((1,0,0, 0))
+
+        if status == "Scrapped":
+            self.models[model][1] = self.models[model][1] + 1
+        elif status == "Faulty":
+            self.models[model][2] = self.models[model][2] + 1
+        else:
+            if PPMDueDate > datetime.datetime.now():
+                self.models[model][3] = self.models[model][3] + 1
 
 
 class SiteResults():
@@ -91,12 +104,25 @@ class SiteResults():
         """
         return self.sites
 
-    def addSite(self, site):
+    def addSite(self, site, status, PPMDueDate):
         """  If the site already exists in the dictionary add to the count else add the site.
+
+             The key is the site.
+             The data is list of (site total, site scrapped, site faulty, site in date).
         """
         if site in self.sites:
             self.sites[site][0] = self.sites[site][0] + 1
         else:
-            self.sites[site] = [0]
+            self.sites[site] = list((1,0,0, 0))
+
+        if status == "Scrapped":
+            self.sites[site][1] = self.sites[site][1] + 1
+        elif status == "Faulty":
+            self.sites[site][2] = self.sites[site][2] + 1
+        else:
+            if PPMDueDate > datetime.datetime.now():
+                self.sites[site][3] = self.sites[site][3] + 1
+
+
 
 

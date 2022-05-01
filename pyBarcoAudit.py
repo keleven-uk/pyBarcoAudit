@@ -23,7 +23,6 @@
 
 import textwrap
 import argparse
-import datetime
 import colorama
 from tqdm import tqdm
 from pathlib import Path
@@ -36,85 +35,11 @@ from src.myLicense import printLongLicense, printShortLicense
 from src.dataClasses import Monitor, MonitorResults, ModelResults, SiteResults
 from src.dataMapping import *
 
-############################################################################################ printModelResults ########
-def printModelResults(modelResults):
-    """  Prints the Model results
-    """
-    total = 0
-    print("-" + " Model Information " + "-"*61)
-    print()
-    for model in modelResults.models:
-        print(f"{model:15} {modelResults.models[model][0]}")
-        total += modelResults.models[model][0]
+import src.utils.monitor_utils as monitor
+import src.utils.model_utils   as mu
+import src.utils.site_utils    as su
 
-    print("="*80)
-    print(f" Total Models  : {total}")
-    print()
-############################################################################################ parseModel ###############
-def parseModel(monitors, modelResults):
-    """  Loops through the directory monitors collating the Model results.
-    """
-    for monitor in monitors:
-        modelResults.addModel(monitor.monitorType)
-############################################################################################ printSiteResults #########
-def printSiteResults(siteResults):
-    """  Prints the Site results
-    """
-    total = 0
-    print("-" + " Site Information " + "-"*61)
-    print()
-    for site in siteResults.sites:
-        print(f"{site:15} {siteResults.sites[site][0]}")
-        total += siteResults.sites[site][0]
 
-    print("="*80)
-    print(f" Total Monitors  : {total}")
-    print()
-############################################################################################ parseSite ################
-def parseSite(monitors, siteResults):
-    """  Loops through the directory monitors collating the Site results.
-    """
-    for monitor in monitors:
-        siteResults.addSite(monitor.Site)
-############################################################################################ printMonitorResults ######
-def printMonitorResults(monitorResults):
-    """  Prints the Monitor results
-    """
-    inDate  = monitorResults.inDateMonitors  / monitorResults.totalMonitors * 100
-    outDate = monitorResults.outDateMonitors / monitorResults.totalMonitors * 100
-
-    print("-" + " Monitor Information " + "-"*58)
-    print()
-    print(f" Total Monitors    : {monitorResults.totalMonitors:4}             Monitors in date          : {monitorResults.inDateMonitors}  {inDate:.2f}%")
-    print(f" Scrapped Monitors : {monitorResults.ScrappedMonitors:4}             Monitors out of date      : {monitorResults.outDateMonitors}  {outDate:.2f}%")
-    print(f" Failed Monitors   : {monitorResults.FailedMonitors:4}             Monitors with no due date : {monitorResults.errDateMonitors}")
-    print("="*80)
-    print(f" Live Monitors     : {monitorResults.totalMonitors-monitorResults.ScrappedMonitors-monitorResults.FailedMonitors:4} \
-                                        {monitorResults.inDateMonitors+monitorResults.outDateMonitors-monitorResults.errDateMonitors}")
-    print()
-
-############################################################################################ parseMonitors ############
-def parseMonitors(monitors, monitorResults):
-    """  Loops through the directory monitors collating the Monitor results.
-    """
-    monitorResults.totalMonitors = len(monitors)
-
-    for monitor in monitors:
-        if monitor.Status == "Scrapped":
-            monitorResults.ScrappedMonitors = monitorResults.ScrappedMonitors + 1
-        elif monitor.Status == "Faulty":
-            monitorResults.FailedMonitors = monitorResults.FailedMonitors + 1
-        else:
-            #  Only process live monitors.
-            if monitor.PPMDueDate == None:                                      #  In case of error.
-                logger.error(f"{monitor.serialNumber} has no PPM date set.")
-                monitorResults.errDateMonitors = monitorResults.errDateMonitors + 1
-                continue
-
-            if monitor.PPMDueDate > datetime.datetime.now():
-                monitorResults.inDateMonitors = monitorResults.inDateMonitors + 1
-            else:
-                monitorResults.outDateMonitors = monitorResults.outDateMonitors + 1
 
 ############################################################################################ scanWorkBook ######
 def scanWorkBook(source, monitors):
@@ -149,6 +74,8 @@ def scanWorkBook(source, monitors):
                           SecondPPMDate  = row[SECOND_PPM_DATE],
                           ThirdPPMDate   = row[THIRD_PPM_DATE],
                           FourthPPMDate  = row[FOURTH_PPM_DATE],
+                          FifthPPMDate   = row[FIFTH_PPM_DATE],
+                          SixthPPMDate   = row[SIXTH_PPM_DATE],
                           PPMDueDate     = row[PPM_DUE_DATE],
                           Status         = row[STATUS],
                           CommentOne     = row[COMMENT_ONE],
@@ -156,15 +83,8 @@ def scanWorkBook(source, monitors):
 
         monitors.append(monitor)
 
-        checkForErrors(monitor)
-######################################################################################### checkForErrors ######
-def checkForErrors(monitor):
-    """  Check for some common errors with the data.
-    """
-    if monitor.monitorType == "":
-        logger.error(f"Monitor has no monitor type {monitor.serialNumber}.")
-    if monitor.Site == "":
-        logger.error(f"Monitor has no Site {monitor.serialNumber}.")
+
+
 ############################################################################################## parseArgs ######
 def main(source):
     """  Main function, calls each separate stage.
@@ -179,16 +99,14 @@ def main(source):
 
     scanWorkBook(source, monitors)
 
-    print()
+    monitor.parseMonitors(monitors, monitorResults)
+    monitor.printMonitorResults(monitorResults)
 
-    parseMonitors(monitors, monitorResults)
-    printMonitorResults(monitorResults)
+    mu.parseModel(monitors, modelResults)
+    mu.printModelResults(modelResults)
 
-    parseModel(monitors, modelResults)
-    printModelResults(modelResults)
-
-    parseSite(monitors, siteResults)
-    printSiteResults(siteResults)
+    su.parseSite(monitors, siteResults)
+    su.printSiteResults(siteResults)
 
 ############################################################################################## parseArgs ######
 def parseArgs():
@@ -208,10 +126,9 @@ def parseArgs():
         """),
         epilog = f" Kevin Scott (C) 2020 :: {myConfig.NAME} {myConfig.VERSION}")
 
-    parser.add_argument("-s",  "--source",
-        type=Path, action="store", default=False, help="Source file.")
-    parser.add_argument("-l",  "--license",        action="store_true" , help="Print the Software License.")
-    parser.add_argument("-v",  "--version",        action="store_true" , help="Print the version of the application.")
+    parser.add_argument("-s",  "--source",  type=Path, action="store", default=False, help="Source file.")
+    parser.add_argument("-l",  "--license", action="store_true" , help="Print the Software License.")
+    parser.add_argument("-v",  "--version", action="store_true" , help="Print the version of the application.")
 
     args = parser.parse_args()
 
@@ -267,5 +184,6 @@ if __name__ == "__main__":
     print(f"{colorama.Fore.CYAN}Completed :: {timeStop} {colorama.Fore.RESET}")
     logger.info(f"Completed :: {timeStop}")
     logger.info(f"End of {myConfig.NAME} {myConfig.VERSION}")
+    logger.info("-"*100)
 
     exit(0)

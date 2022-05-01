@@ -1,7 +1,7 @@
 colorama==0.4.4
-et-xmlfile==1.0.1
+et-xmlfile==1.1.0
 jdcal==1.4.1
 libindic-utils==1.0.3
-openpyxl==3.0.5
+openpyxl==3.0.9
 toml==0.10.2
-tqdm==4.51.0
+tqdm==4.64.0

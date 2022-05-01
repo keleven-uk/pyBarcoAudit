@@ -21,9 +21,9 @@
 
 #  Edges of the data table .
 MIN_ROW = 4
-MAX_ROW = 1179
+MAX_ROW = 1303
 MIN_COL = 2
-MAX_COL = 28
+MAX_COL = 29
 
 #  Header columns
 #  These are row positions, tuples start at zero.
@@ -42,7 +42,9 @@ FIRST_PPM_DATE    = 16
 SECOND_PPM_DATE   = 17
 THIRD_PPM_DATE    = 18
 FOURTH_PPM_DATE   = 19
-PPM_DUE_DATE      = 21
-STATUS            = 23
-COMMENT_ONE       = 24
-COMMENT_TWO       = 25
+FIFTH_PPM_DATE    = 20
+SIXTH_PPM_DATE    = 21
+PPM_DUE_DATE      = 23
+STATUS            = 25
+COMMENT_ONE       = 26
+COMMENT_TWO       = 27
