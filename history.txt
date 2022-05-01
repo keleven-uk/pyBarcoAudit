@@ -1,3 +1,9 @@
+V2022.5
+
+    Created directories logs & src and moved relevant files.
+    Brought source up to date.
+
+
 V2022.4
 
     Woke up project again, it needs to be finished because I need to use it.

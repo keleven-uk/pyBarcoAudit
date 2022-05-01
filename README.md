@@ -23,7 +23,7 @@ optional arguments:
 
 
 
- Kevin Scott (C) 2020 :: pyBarcoAudit V2020.
+ Kevin Scott (C) 2020-22 :: pyBarcoAudit V2020.
 
 
 

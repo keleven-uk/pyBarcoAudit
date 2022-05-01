@@ -1,13 +1,12 @@
 ###############################################################################################################
-#    pyBarcoAudit   Copyright (C) <2020>  <Kevin Scott>                                                       #                                                                                                             #
-#    The program will scan a Excel spreadsheet of calibration dates and produce a usage report.               #
+#    pyBarcoAudit   Copyright (C) <2020-22>  <Kevin Scott>                                                    #                                                                                                             #    The program will scan a Excel spreadsheet of calibration dates and produce a usage report.               #
 #                                                                                                             #
 # usage: pyBarcoAudit.py [-h] [-s SOURCE]                                                                     #
 #                                                                                                             #
 #     For changes see history.txt                                                                             #
 #                                                                                                             #
 ###############################################################################################################
-#    Copyright (C) <2020>  <Kevin Scott>                                                                      #
+#    Copyright (C) <2020-22>  <Kevin Scott>                                                                   #
 #                                                                                                             #
 #    This program is free software: you can redistribute it and/or modify it under the terms of the           #
 #    GNU General Public License as published by the Free Software Foundation, either Version 3 of the         #
@@ -25,16 +24,17 @@
 import textwrap
 import argparse
 import datetime
-from pathlib import Path
 import colorama
-import myTimer
-import myConfig
-import myLogger
-from openpyxl import load_workbook
 from tqdm import tqdm
-from dataClasses import Monitor, MonitorResults, ModelResults, SiteResults
-from myLicense import printLongLicense, printShortLicense
-from dataMapping import *
+from pathlib import Path
+from openpyxl import load_workbook
+
+import src.myTimer  as myTimer
+import src.myConfig as myConfig
+import src.myLogger as myLogger
+from src.myLicense import printLongLicense, printShortLicense
+from src.dataClasses import Monitor, MonitorResults, ModelResults, SiteResults
+from src.dataMapping import *
 
 ############################################################################################ printModelResults ########
 def printModelResults(modelResults):
@@ -249,7 +249,7 @@ def parseArgs():
 if __name__ == "__main__":
 
     myConfig    = myConfig.Config()                                                # Need to do this first.
-    logger      = myLogger.get_logger(myConfig.NAME + ".log")                      # Create the logger.
+    logger      = myLogger.get_logger(f"logs\\{myConfig.NAME}.log")                      # Create the logger.
     timer       = myTimer.Timer()
 
     timer.Start
