@@ -134,4 +134,7 @@ $RECYCLE.BIN/
 dup.txt
 Barco.xlsx
 
+# virtual envirinment
+env_3.10/
+
 # End of https://www.gitignore.io/api/python,windows

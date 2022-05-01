@@ -1,10 +1,19 @@
-V2020.1.e6cb24c
+V2022.4
 
-    The program will scan a Excel spreadsheet of calibration dates and produce a usage report.
-    Mainly an exercise in using openpyxl.
-    Main outline of program completes [mainly copies form another :-)]
-    Will parse and validate initial arguments.
-    Will loop through spreadsheet and print rows
+    Woke up project again, it needs to be finished because I need to use it.
+    Tested against python 3.10
+
+
+V2020.3
+
+    dataClasses.py
+        Added two new classes to hold the breakdown totals for site and model.
+    pyBarcoAudit.py
+        Added stuff to scan and print results for sites and models.
+        Just total for now, which don't add up.  They will :-)
+        Added a check for common errors i.e. a monitor having no site or model information.
+        Correct a bug if there was not ppm due date.
+
 
 V2020.2.be1ca3e
 
@@ -15,12 +24,14 @@ V2020.2.be1ca3e
         Will now scan the spreadsheet and report on number live, scrapped & failed monitors.
         Will also report on number on monitors in and out of date.
 
-V2020.3
 
-        dataClasses.py
-            Added two new classes to hold the breakdown totals for site and model.
-        pyBarcoAudit.py
-            Added stuff to scan and print results for sites and models.
-            Just total for now, which don't add up.  They will :-)
-            Added a check for common errors i.e. a monitor having no site or model information.
-            Correct a bug if there was not ppm due date.
+V2020.1.e6cb24c
+
+    The program will scan a Excel spreadsheet of calibration dates and produce a usage report.
+    Mainly an exercise in using openpyxl.
+    Main outline of program completes [mainly copies form another :-)]
+    Will parse and validate initial arguments.
+    Will loop through spreadsheet and print rows
+
+
+

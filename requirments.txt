@@ -1,7 +1,7 @@
-###### Requirements without Version Specifiers ######
-openpyxl
-colorama
-tqdm
-
-###### Requirements with Version Specifiers ######
-libindic-utils>=1.0.3
+colorama==0.4.4
+et-xmlfile==1.0.1
+jdcal==1.4.1
+libindic-utils==1.0.3
+openpyxl==3.0.5
+toml==0.10.2
+tqdm==4.51.0
