@@ -1,8 +1,14 @@
+V2022.7
+
+    Corrected two bugs.
+        The logger was not being passed into monitor_utils, so an error crashed the app.
+        A blank field (monitor) crashed the print statement in the results print.
+
 V2022.6
 
     Finished the logic for scanning the spreadsheet and collating the number of monitors
     in calibration date and displaying data by overall number, by site and by model.
-    re-structured the main file, so that all related function now reside in their own modules.
+    Re-structured the main file, so that all related function now reside in their own modules.
     Seems to be working okay.
 
 V2022.5

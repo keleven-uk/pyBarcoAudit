@@ -86,7 +86,7 @@ def scanWorkBook(source, monitors):
 
 
 ############################################################################################## parseArgs ######
-def main(source):
+def main(source, logger):
     """  Main function, calls each separate stage.
             scanWorkBook(source)                        -   scans the spreadsheet and populates the directory monitors.
             parseMonitors(monitors, monitorResults)     -   collates the results.
@@ -99,7 +99,7 @@ def main(source):
 
     scanWorkBook(source, monitors)
 
-    monitor.parseMonitors(monitors, monitorResults)
+    monitor.parseMonitors(monitors, monitorResults, logger)
     monitor.printMonitorResults(monitorResults)
 
     mu.parseModel(monitors, modelResults)
@@ -124,7 +124,7 @@ def parseArgs():
         The program will scan a Excel spreadsheet of calibration dates and produce a usage report.
         -----------------------
         """),
-        epilog = f" Kevin Scott (C) 2020 :: {myConfig.NAME} {myConfig.VERSION}")
+        epilog = f" Kevin Scott (C) 2020-22 :: {myConfig.NAME} {myConfig.VERSION}")
 
     parser.add_argument("-s",  "--source",  type=Path, action="store", default=False, help="Source file.")
     parser.add_argument("-l",  "--license", action="store_true" , help="Print the Software License.")
@@ -176,7 +176,7 @@ if __name__ == "__main__":
 
     source = parseArgs()
 
-    main(source)
+    main(source, logger)
 
     timeStop = timer.Stop
 

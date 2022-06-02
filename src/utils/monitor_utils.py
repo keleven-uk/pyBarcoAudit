@@ -39,7 +39,7 @@ def printMonitorResults(monitorResults):
     print()
 
 ############################################################################################ parseMonitors ############
-def parseMonitors(monitors, monitorResults):
+def parseMonitors(monitors, monitorResults, logger):
     """  Loops through the directory monitors collating the Monitor results.
     """
     monitorResults.totalMonitors = len(monitors)
@@ -51,7 +51,7 @@ def parseMonitors(monitors, monitorResults):
             monitorResults.FailedMonitors = monitorResults.FailedMonitors + 1
         else:
             #  Only process live monitors.
-            checkForErrors(monitor, monitorResults)
+            checkForErrors(monitor, monitorResults, logger)
 
             if monitor.PPMDueDate > datetime.datetime.now():
                 monitorResults.inDateMonitors = monitorResults.inDateMonitors + 1
@@ -60,7 +60,7 @@ def parseMonitors(monitors, monitorResults):
 
 
 ######################################################################################### checkForErrors ######
-def checkForErrors(monitor, monitorResults):
+def checkForErrors(monitor, monitorResults, logger):
     """  Check for some common errors with the data.
     """
     future_date = datetime.datetime.now() + datetime.timedelta(days=365)

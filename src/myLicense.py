@@ -1,5 +1,5 @@
 ###############################################################################################################
-#    myLicense.py   Copyright (C) <2020-220>  <Kevin Scott>                                                   #
+#    myLicense.py   Copyright (C) <2020-22>  <Kevin Scott>                                                   #
 #                                                                                                             #
 #    Two methods to print out License information, one short and one long.                                    #
 #    One method to either print text to screen or a file.                                                     #
