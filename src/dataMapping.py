@@ -21,7 +21,7 @@
 
 #  Edges of the data table .
 MIN_ROW = 4
-MAX_ROW = 1303
+MAX_ROW = 1321
 MIN_COL = 2
 MAX_COL = 29
 
@@ -48,3 +48,5 @@ PPM_DUE_DATE      = 23
 STATUS            = 25
 COMMENT_ONE       = 26
 COMMENT_TWO       = 27
+
+

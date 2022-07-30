@@ -46,8 +46,8 @@ def printSiteResults(siteResults):
         faulty   = siteResults.sites[site][2]
         indate   = siteResults.sites[site][3]
         live     = total - scrapped - faulty
-        percent  = (indate/total) * 100
-        print(f"{site:10} {total:10} {scrapped:10} {faulty:10} {live:10} {indate:10} {percent:10.2f}")
+        percent  = (indate/live) * 100
+        print(f"{site:10} {total:10} {scrapped:10} {faulty:10} {live:10} {indate:10} {percent:10.2f}%")
         site_total    += total
         site_scrapped += scrapped
         site_faulty   += faulty
@@ -55,7 +55,7 @@ def printSiteResults(siteResults):
 
     print("="*80)
     site_live = site_total - site_scrapped - site_faulty
-    site_percent  = (site_indate/site_total) * 100
-    print(f"{site_total:21} {site_scrapped:10} {site_faulty:10} {site_live:10} {site_indate:10} {site_percent:10.2f}")
+    site_percent  = (site_indate/site_live) * 100
+    print(f"{site_total:21} {site_scrapped:10} {site_faulty:10} {site_live:10} {site_indate:10} {site_percent:10.2f}%")
     print()
 

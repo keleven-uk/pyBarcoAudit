@@ -46,9 +46,9 @@ def printModelResults(modelResults):
         faulty   = modelResults.models[model][2]
         indate   = modelResults.models[model][3]
         live     = total - scrapped - faulty
-        percent  = (indate/total) * 100
+        percent  = (indate/live) * 100
         try:                #  to catch missing data
-            print(f"{model:14} {total:10} {scrapped:10} {faulty:10} {live:10} {indate:10} {percent:10.2f}")
+            print(f"{model:14} {total:10} {scrapped:10} {faulty:10} {live:10} {indate:10} {percent:10.2f}%")
         except:
             print(f"ERROR in {model}")
         model_total    += total
@@ -58,8 +58,8 @@ def printModelResults(modelResults):
 
     print("="*80)
     model_live = model_total - model_scrapped - model_faulty
-    model_percent  = (model_indate/model_total) * 100
-    print(f"{model_total:25} {model_scrapped:10} {model_faulty:10} {model_live:10} {model_indate:10} {model_percent:10.2f}")
+    model_percent  = (model_indate/model_live) * 100
+    print(f"{model_total:25} {model_scrapped:10} {model_faulty:10} {model_live:10} {model_indate:10} {model_percent:10.2f}%")
     print()
 
 

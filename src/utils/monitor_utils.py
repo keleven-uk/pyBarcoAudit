@@ -25,8 +25,11 @@ import datetime
 def printMonitorResults(monitorResults):
     """  Prints the Monitor results
     """
-    inDate  = monitorResults.inDateMonitors  / monitorResults.totalMonitors * 100
-    outDate = monitorResults.outDateMonitors / monitorResults.totalMonitors * 100
+    liveResults = monitorResults.totalMonitors-monitorResults.ScrappedMonitors-monitorResults.FailedMonitors
+    liveInDate  = monitorResults.inDateMonitors+monitorResults.outDateMonitors-monitorResults.errDateMonitors
+
+    inDate  = monitorResults.inDateMonitors  / liveInDate * 100
+    outDate = monitorResults.outDateMonitors / liveInDate * 100
 
     print("-" + " Monitor Information " + "-"*58)
     print()
@@ -34,8 +37,7 @@ def printMonitorResults(monitorResults):
     print(f" Scrapped Monitors : {monitorResults.ScrappedMonitors:4}             Monitors out of date   : {monitorResults.outDateMonitors}  {outDate:.2f}%")
     print(f" Failed Monitors   : {monitorResults.FailedMonitors:4}             Monitors with errors   : {monitorResults.errDateMonitors}")
     print("="*80)
-    print(f" Live Monitors     : {monitorResults.totalMonitors-monitorResults.ScrappedMonitors-monitorResults.FailedMonitors:4} \
-                                        {monitorResults.inDateMonitors+monitorResults.outDateMonitors-monitorResults.errDateMonitors}")
+    print(f" Live Monitors     : {liveResults:4}                                      {liveInDate}")
     print()
 
 ############################################################################################ parseMonitors ############

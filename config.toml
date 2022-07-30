@@ -6,7 +6,7 @@
 #   July 2020    (c) Kevin Scott
 
 [INFO]
-myVERSION = "2022.7"
+myVERSION = "2022.8"
 myNAME = "pyBarcoAudit"
 
 [TQDM]
