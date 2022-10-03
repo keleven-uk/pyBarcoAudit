@@ -19,6 +19,12 @@
 #                                                                                                             #
 ###############################################################################################################
 
+V2022.9
+
+    Amended checkForErrors() in monitor_utils.py, to raise an exception.
+    The calling logic now uses a try except to catch the resulting error (if any).
+
+
 V2022.8
 
     Corrected a bug.  The percent values where using total monitors instead of live monitors.

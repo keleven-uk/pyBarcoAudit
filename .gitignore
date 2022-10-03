@@ -133,7 +133,7 @@ $RECYCLE.BIN/
 # local files
 *.pickle
 dup.txt
-Barco.xlsx
+Barco*.xlsx
 results*.*
 
 

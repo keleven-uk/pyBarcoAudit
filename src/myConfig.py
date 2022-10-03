@@ -80,7 +80,7 @@ class Config():
         """
         config = dict()
 
-        config['INFO'] = {'myVERSION': '2022.8',
+        config['INFO'] = {'myVERSION': '2022.9',
                           'myNAME'   : 'pyBarcoAudit'}
 
         config['TQDM'] = {'ncols': 160}

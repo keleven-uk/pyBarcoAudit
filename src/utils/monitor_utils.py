@@ -53,35 +53,43 @@ def parseMonitors(monitors, monitorResults, logger):
             monitorResults.FailedMonitors = monitorResults.FailedMonitors + 1
         else:
             #  Only process live monitors.
-            checkForErrors(monitor, monitorResults, logger)
 
-            if monitor.PPMDueDate > datetime.datetime.now():
-                monitorResults.inDateMonitors = monitorResults.inDateMonitors + 1
-            else:
-                monitorResults.outDateMonitors = monitorResults.outDateMonitors + 1
+            try:
+                checkForErrors(monitor, monitorResults, logger)
+
+                if monitor.PPMDueDate > datetime.datetime.now():
+                    monitorResults.inDateMonitors = monitorResults.inDateMonitors + 1
+                else:
+                    monitorResults.outDateMonitors = monitorResults.outDateMonitors + 1
+            except ValueError as err:
+                logger.error(err.args)
+                monitorResults.errDateMonitors = monitorResults.errDateMonitors + 1
 
 
 ######################################################################################### checkForErrors ######
 def checkForErrors(monitor, monitorResults, logger):
     """  Check for some common errors with the data.
     """
+    error_flag = False
+
     future_date = datetime.datetime.now() + datetime.timedelta(days=365)
 
     if monitor.PPMDueDate == None:                                      #  In case of error.
-        logger.error(f"{monitor.serialNumber} has no PPM date set.")
-        monitorResults.errDateMonitors = monitorResults.errDateMonitors + 1
+        raise ValueError(f"{monitor.serialNumber} has no PPM date set.")
+
     if monitor.monitorType == "":
-        logger.error(f"Monitor has no monitor type {monitor.serialNumber}.")
-        monitorResults.errDateMonitors = monitorResults.errDateMonitors + 1
+        raise ValueError(f"Monitor has no monitor type {monitor.serialNumber}.")
+
     if monitor.Site == "":
-        logger.error(f"Monitor has no Site {monitor.serialNumber}.")
-        monitorResults.errDateMonitors = monitorResults.errDateMonitors + 1
+        raise ValueError(f"Monitor has no Site {monitor.serialNumber}.")
+
     if monitor.Status not in ("Scrapped", "Faulty", None):
-        logger.error(f"Monitor has unknown status {monitor.serialNumber} of {monitor.Status}.")
-        monitorResults.errDateMonitors = monitorResults.errDateMonitors + 1
+        raise ValueError(f"Monitor has unknown status {monitor.serialNumber} of {monitor.Status}.")
+
     if monitor.PPMDueDate > future_date:
-        logger.error(f"Monitor has a future date {monitor.serialNumber} of {monitor.PPMDueDate}.")
-        monitorResults.errDateMonitors = monitorResults.errDateMonitors + 1
+        raise ValueError(f"Monitor has a future date {monitor.serialNumber} of {monitor.PPMDueDate}.")
+
+
 
 
 
